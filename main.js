@@ -1,6 +1,6 @@
-import { userCreate } from "./Users.js";
-import { userList } from "./Users.js";
-import { userDelete } from "./Users.js";
+import { userCreate } from "./user.js";
+import { userList } from "./user.js";
+import { userDelete } from "./user.js";
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
