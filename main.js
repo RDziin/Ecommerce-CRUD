@@ -1,5 +1,5 @@
 import { User } from "./user.js";
-import { productList } from "./product.js";
+import { Product } from "./product.js";
 
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
@@ -7,6 +7,7 @@ const readline = require("readline-sync");
 
 let rep = true
 const userInstance = new User()
+const productInstace = new Product()
 
 function main(){
     do{
