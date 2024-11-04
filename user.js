@@ -1,80 +1,95 @@
-import { idCreator } from './idCreator.js'
-
-import { createRequire } from 'module';
+import { idCreator } from "./idCreator.js";
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const readline = require('readline-sync');
+const readline = require("readline-sync");
 
-let user = {}
-let allUser = []
+let user = {};
+let allUser = [];
 
-let formName = ''
-let formPass = ''
-let formConfPass = ''
-let formDateBirth = ''
+let formName = "";
+let formPassword = "";
+let formConfirmePass = "";
+let formDateBirth = "";
 
-export function userCreate(){
-    console.clear()
-    formName = readline.question('Nome: ')
-    formPass = readline.question('Senha: ', {hideEchoBack: true})
-    formConfPass = readline.question('Confirmar senha: ', {hideEchoBack: true})
-    formDateBirth = readline.question('Nascimento: ')
+export class User {
+  userCreate() {
+    console.clear();
+    formName = readline.question("Nome: ");
+    formPassword = readline.question("Senha: ", { hideEchoBack: true });
+    formConfirmePass = readline.question("Confirmar senha: ", {
+      hideEchoBack: true,
+    });
+    formDateBirth = readline.question("Nascimento (DD/MM/AAAA): ");
 
-    if(formConfPass != formPass){
-        console.log('Confirmação de senha incorreta.')
-        let press = readline.question('Pressione ENTER para continuar...')
-    } else{
-        user = {
-            id: idCreator(),
-            name: formName,
-            dateBirth: formDateBirth,
-        }
-    
-        allUser.push(user)
-    
-        console.clear()
-        console.log('Usuário Criado Com Sucesso!')
-        let press = readline.question('\nPressione ENTER para continuar...')
+    if (formConfirmePass !== formPassword) {
+      console.log("Confirmação de senha incorreta.");
+      readline.question("Pressione ENTER para continuar...");
+    } else if (!this.validateDate(formDateBirth)) {
+      console.log("Data de nascimento inválida. Use o formato DD/MM/AAAA.");
+      readline.question("Pressione ENTER para continuar...");
+    } else {
+      user = {
+        id: idCreator(),
+        name: formName,
+        dateBirth: formDateBirth,
+      };
+
+      allUser.push(user);
+      console.clear();
+      console.log("Usuário Criado Com Sucesso!");
+      readline.question("\nPressione ENTER para continuar...");
     }
-}
+  }
 
-
-
-export function userList(){
-    console.clear()
+  userList() {
+    console.clear();
     allUser.forEach((user) => {
-        console.log(`ID: ${user.id}`)
-        console.log(`Nome: ${user.name}`)
-        console.log(`Nascimento: ${user.dateBirth}`)
-        console.log('================================')
-    })
+      console.log(`ID: ${user.id}`);
+      console.log(`Nome: ${user.name}`);
+      console.log(`Nascimento: ${user.dateBirth}`);
+      console.log("================================");
+    });
+    readline.question("Pressione ENTER para continuar...");
+  }
 
-    let press = readline.question('Presssione ENTER para cotninuar...')
-}
-
-export function userDelete(){
-    console.clear()
+  userDelete() {
+    console.clear();
     allUser.forEach((user) => {
-        console.log(`ID: ${user.id}`)
-        console.log(`Nome: ${user.name}`)
-        console.log(`Nascimento: ${user.dateBirth}`)
-        console.log('================================')
-    })
-    let deleteID = readline.questionInt('Digite o ID que quer deletar: ')
-    console.clear()
-    const index = allUser.findIndex(user => user.id === deleteID)
+      console.log(`ID: ${user.id}`);
+      console.log(`Nome: ${user.name}`);
+      console.log(`Nascimento: ${user.dateBirth}`);
+      console.log("================================");
+    });
+    const deleteID = readline.questionInt("Digite o ID que quer deletar: ");
+    console.clear();
+    const index = allUser.findIndex((user) => user.id === deleteID);
 
-    if(index === -1){
-        console.log('Usuário não existe.')
-    } else{
-        console.log('O usuário deletado será: ')
-        const userToDelete = allUser[index]
-        console.log(`ID: ${userToDelete.id}`)
-        console.log(`Nome: ${userToDelete.name}`)
-        console.log(`Nascimento: ${userToDelete.dateBirth}`)
-        console.log('================================\n')
+    if (index === -1) {
+      console.log("Usuário não existe.");
+    } else {
+      const userToDelete = allUser[index];
+      console.log("O usuário deletado será:");
+      console.log(`ID: ${userToDelete.id}`);
+      console.log(`Nome: ${userToDelete.name}`);
+      console.log(`Nascimento: ${userToDelete.dateBirth}`);
+      console.log("================================\n");
 
-        allUser.splice(index, 1)
-        console.log('Usuário Deletado Com Sucesso!')
-        let press = readline.question('Presssione ENTER para cotninuar...')
+      const confirmDelete = readline
+        .question("Confirmar exclusão? (s/n): ")
+        .toLowerCase();
+      if (confirmDelete === "s") {
+        allUser.splice(index, 1);
+        console.log("Usuário Deletado Com Sucesso!");
+      } else {
+        console.log("Exclusão cancelada.");
+      }
     }
+    readline.question("Pressione ENTER para continuar...");
+  }
+
+  validateDate(date) {
+    const dateFormat = /^\d{2}\/\d{2}\/\d{4}$/;
+    console.log("Format: ", dateFormat); 
+    return dateFormat.test(date);
+}
 }

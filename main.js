@@ -1,33 +1,44 @@
-import { userCreate } from "./user.js";
-import { userList } from "./user.js";
-import { userDelete } from "./user.js";
+import { User } from "./user.js";
+import { productList } from "./product.js";
 
-import { createRequire } from 'module';
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const readline = require('readline-sync');
+const readline = require("readline-sync");
 
 let rep = true
+const userInstance = new User()
 
-do{
-    console.clear()
-    let opt = readline.questionInt('1 - Criar \n2 - Listar \n3 - Deletar \n0 - Sair \nEscolha: ')
+function main(){
+    do{
+        //Tela Inicial 
+        /* let userType = readline.questionInt('Você é: \n1 - Usuário \n2 - Administrador \n0 - Sair \nEscolha: ')
+        switch(userType){
+            case 1:
+                console.log('sadfds')
+                break
+        } */
+        console.clear()
+        let choose = readline.questionInt("1 - Criar \n2 - Listar \n3 - Deletar \n0 - Sair \nEscolha: ")
+    
+        switch(choose){
+            case 1:
+                userInstance.userCreate()
+                break
+            case 2:
+                userInstance.userList()
+                break
+            case 3:
+                userInstance.userDelete()
+                break
+            case 0:
+                console.log("Saindo...")
+                rep = false
+                break
+            default:
+                console.log("Opcao Não existente")
+                break
+        }
+    } while(rep)  
+}
 
-    switch(opt){
-        case 1:
-            userCreate()
-            break
-        case 2:
-            userList()
-            break
-        case 3:
-            userDelete()
-            break
-        case 0:
-            console.log('Saindo...')
-            rep = false
-            break
-        default:
-            console.log('Opcao Não existente')
-            break
-    }
-} while(rep)
+main()
