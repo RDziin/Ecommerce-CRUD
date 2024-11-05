@@ -41,25 +41,32 @@ export class User {
     }
   }
 
-  userList() {
-    console.clear();
+  list(){
     allUser.forEach((user) => {
       console.log(`ID: ${user.id}`);
       console.log(`Nome: ${user.name}`);
       console.log(`Nascimento: ${user.dateBirth}`);
       console.log("================================");
     });
-    readline.question("Pressione ENTER para continuar...");
+  }
+
+  userList() {
+    console.clear();
+    if (allUser.length < 1) {
+      console.clear()
+      readline.question(
+        "Nenhum Usuário Cadastrado. \nPressione ENTER para continuar..."
+      );
+    } else {
+      console.clear()
+      this.list()
+      readline.question("Pressione ENTER para continuar...");
+    }
   }
 
   userDelete() {
     console.clear();
-    allUser.forEach((user) => {
-      console.log(`ID: ${user.id}`);
-      console.log(`Nome: ${user.name}`);
-      console.log(`Nascimento: ${user.dateBirth}`);
-      console.log("================================");
-    });
+    this.list()
     const deleteID = readline.questionInt("Digite o ID que quer deletar: ");
     console.clear();
     const index = allUser.findIndex((user) => user.id === deleteID);
@@ -86,10 +93,12 @@ export class User {
     }
     readline.question("Pressione ENTER para continuar...");
   }
+  userUpdate(){
 
+  }
   validateDate(date) {
     const dateFormat = /^\d{2}\/\d{2}\/\d{4}$/;
-    console.log("Format: ", dateFormat); 
+    console.log("Format: ", dateFormat);
     return dateFormat.test(date);
-}
+  }
 }

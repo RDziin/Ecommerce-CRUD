@@ -47,16 +47,24 @@ export class Product {
   }
 
   productList() {
-    console.clear();
-    this.list(); 
+    if(stock.length < 1){
+      readline.question(
+        "Nenhum Produt Cadastrado. \nPressione ENTER para continuar..."
+      );
+    } else{
+      console.clear();
+    this.list();
     readline.question("Pressione ENTER para continuar...");
+    }
   }
 
   productDelete() {
     console.clear();
-    this.list(); 
+    this.list();
 
-    const idDelete = readline.questionInt("Digite o ID do produto a ser deletado: ");
+    const idDelete = readline.questionInt(
+      "Digite o ID do produto a ser deletado: "
+    );
     console.clear();
     const index = stock.findIndex((product) => product.id === idDelete);
 
