@@ -1,3 +1,4 @@
+import { read } from "fs";
 import { idCreator } from "./idCreator.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
@@ -43,6 +44,25 @@ export class User {
     }
   }
 
+  userLogin(){
+    console.clear()
+    let loginName = readline.question("Login: ")
+    let loginPassword = readline.question("Senha: ", {hideEchoBack: true})  
+
+    const loginUser = allUser.find((u) => u.name === loginName && u.password === loginPassword)
+
+    if (loginUser) {
+      console.log("Login efetuado com sucesso!");
+      readline.question("\nPressione ENTER para continuar...");
+      return true
+    } else {
+      console.log("Nome de usuário ou senha incorretos.");
+      readline.question("\nPressione ENTER para tentar novamente...");
+      this.userLogin();
+      return false
+    }
+  }
+
   list() {
     allUser.forEach(User => {
       console.log(`ID: ${User.id}`);
@@ -64,6 +84,7 @@ export class User {
       this.list();
       readline.question("Pressione ENTER para continuar...");
     }
+   
   }
 
   userDelete() {

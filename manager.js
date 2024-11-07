@@ -10,12 +10,16 @@ import { idCreator } from "./idCreator.js";
 const userInstance = new User();
 const productInstance = new Product();
 
+
+
 export class Manager {
   constructor(id, name, password){
     this.id = id
     this.name = name;
     this.password = password
   }
+  
+  
   
   userManager() {
     userInstance.userList();
@@ -109,3 +113,5 @@ export class Manager {
     }
   }
 }
+
+const admin = new Manager(1, "Rhodrigo", "RD123")
