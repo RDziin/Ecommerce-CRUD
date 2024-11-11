@@ -4,114 +4,110 @@ const readline = require("readline-sync");
 
 import { User } from "./user.js";
 import { Product } from "./product.js";
-import { read } from "fs";
-import { idCreator } from "./idCreator.js";
 
 const userInstance = new User();
 const productInstance = new Product();
 
-
-
 export class Manager {
-  constructor(id, name, password){
-    this.id = id
+  constructor(id, name, password) {
+    this.id = id;
     this.name = name;
-    this.password = password
+    this.password = password;
   }
-  
-  
-  
-  userManager() {
-    userInstance.userList();
-    let managerChooseUser = readline.question(
-      "Deseja fazer alguma alteração? \n1 - Modificar Dados \n 2 - Deletar \n0 - Voltar \nEscolha: "
-    );
-    switch (managerChooseUser) {
-      case Y:
-      case y:
-        let modUserChosse = readline.questionInt(
-          "1 - Modificar Dados \n 2 - Deletar 0 - Voltar"
+
+  // Método de login do gerente
+  managerLogin() {
+    console.clear();
+    const admin = new Manager(1, "Rhodrigo", "RD123");
+    let attempts = 3;
+
+    while (attempts > 0) {
+      let loginName = readline.question("Login: ");
+      let loginPassword = readline.question("Senha: ", { hideEchoBack: true });
+
+      if (loginName === admin.name && loginPassword === admin.password) {
+        console.log("Login efetuado com sucesso!");
+        readline.question("\nPressione ENTER para continuar...");
+        return true;
+      } else {
+        attempts--;
+        console.log(
+          `Nome de usuário ou senha incorretos. Tentativas restantes: ${attempts}`
         );
-        switch (modUserChosse) {
-          case 1:
-            userInstance.userUpdate();
-            break;
-          case 2:
-            userInstance.userDelete();
-            break;
-          case 0:
-            break;
-          default:
-            console.log("Opção Invàlida.");
-            break;
-        }
-        break;
-    }
-    let deleteUserChoose = readline.question(
-      "Deseja deletar algum usuário? ( Y / N )"
-    );
-    switch (deleteUserChoose) {
-      case "y":
-      case "Y":
-        userInstance.userDelete();
-        break;
-      case "n":
-      case "N":
-        readline.question(
-          "Voltando ao Menu Inicial \nPressione ENTER para continuar..."
-        );
-        break;
-      default:
-        readline.question("Opção Inválida \nPressione ENTER para continuar...");
-        break;
+      }
+
+      if (attempts === 0) {
+        console.log("Número de tentativas excedido. Acesso negado.");
+        readline.question("\nPressione ENTER para sair...");
+        return false;
+      }
     }
   }
 
-  productManager() {
-    productInstance.productList();
-    let managerChooseProduct = readline.question(
-      "Deseja fazer alguma alteração? \n1 - Modificar Dados \n 2 - Deletar \n0 - Voltar \nEscolha: "
-    );
-    switch (managerChooseProduct) {
-      case Y:
-      case y:
-        let modproductChosse = readline.questionInt(
-          "1 - Modificar Dados \n 2 - Deletar 0 - Voltar"
-        );
-        switch (modproductChosse) {
-          case 1:
-            productInstance.productUpdate();
-            break;
-          case 2:
-            productInstance.productDelete();
-            break;
-          case 0:
-            break;
-          default:
-            console.log("Opção Invàlida.");
-            break;
-        }
-        break;
+  // Gerenciamento de usuários
+  userManager() {
+    console.clear();
+    userInstance.userList();
+    let managerChooseUser = readline
+      .question("\nDeseja realizar alguma alteração? (S/N): ")
+      .toUpperCase();
+
+    if (managerChooseUser === "S") {
+      let modUserChoose = readline.questionInt(
+        "\n1 - Modificar Dados \n2 - Deletar Usuário \n0 - Voltar \nEscolha: "
+      );
+
+      switch (modUserChoose) {
+        case 1:
+          userInstance.userUpdate();
+          break;
+        case 2:
+          userInstance.userDelete();
+          break;
+        case 0:
+          console.log("Voltando ao menu anterior...");
+          break;
+        default:
+          console.log("Opção Inválida. Retornando ao menu anterior...");
+          break;
+      }
+    } else if (managerChooseUser !== "N") {
+      console.log("Opção inválida.");
     }
-    let deleteproductChoose = readline.question(
-      "Deseja deletar algum usuário? ( Y / N )"
-    );
-    switch (deleteproductChoose) {
-      case "y":
-      case "Y":
-        productInstance.productDelete();
-        break;
-      case "n":
-      case "N":
-        readline.question(
-          "Voltando ao Menu Inicial \nPressione ENTER para continuar..."
-        );
-        break;
-      default:
-        readline.question("Opção Inválida \nPressione ENTER para continuar...");
-        break;
+  }
+
+  // Gerenciamento de produtos
+  productManager() {
+    console.clear();
+    productInstance.productList();
+    let managerChooseProduct = readline
+      .question("\nDeseja realizar alguma alteração? (S/N): ")
+      .toUpperCase();
+
+    if (managerChooseProduct === "S") {
+      let modProductChoose = readline.questionInt(
+        "\n1 - Criar Produto \n2 - Modificar Dados \n3 - Deletar Produto \n0 - Voltar \nEscolha: "
+      );
+
+      switch (modProductChoose) {
+        case 1:
+          productInstance.productCreate();
+          break;
+        case 2:
+          productInstance.productUpdate();
+          break;
+        case 3:
+          productInstance.productDelete();
+          break;
+        case 0:
+          console.log("Voltando ao menu anterior...");
+          break;
+        default:
+          console.log("Opção Inválida. Retornando ao menu anterior...");
+          break;
+      }
+    } else if (managerChooseProduct !== "N") {
+      console.log("Opção inválida.");
     }
   }
 }
-
-const admin = new Manager(1, "Rhodrigo", "RD123")

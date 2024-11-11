@@ -1,25 +1,21 @@
-import { idCreator } from "./idCreator.js";
+import { idCreatorProduct } from "./idCreator.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const readline = require ("readline-sync");
-
-
-
+const readline = require("readline-sync");
 
 let stock = [];
 
-
 export class Product {
-  constructor(id, name, price, quantify){
-    this.id = id
-    this.name = name
-    this.price = price
-    this.quantify = quantify
+  constructor(id, name, price, quantify) {
+    this.id = id;
+    this.name = name;
+    this.price = price;
+    this.quantify = quantify;
   }
 
   productCreate() {
     console.clear();
-    let productID = idCreator()
+    let productID = idCreatorProduct();
     let productName = readline.question("Nome: ");
     let productPrice = readline.questionFloat("Preço: ");
     let productQuantify = readline.questionInt("Quantidade em estoque: ");
@@ -31,33 +27,36 @@ export class Product {
       return;
     }
 
-    const newProduct = new Product(productID, productName, productPrice, productQuantify)
-
+    const newProduct = new Product(
+      productID,
+      productName,
+      productPrice,
+      productQuantify
+    );
     stock.push(newProduct);
-    console.log("Produto Criado com sucesso!");
+    console.log("Produto criado com sucesso!");
     readline.question("Pressione ENTER para continuar...");
   }
 
   list() {
-    stock.forEach(Product => {
-      console.log(`ID: ${Product.id}`);
-      console.log(`Nome: ${Product.name}`);
-      console.log(`Preço: ${Product.price}`);
-      console.log(`Estoque: ${Product.quantify}`);
+    if (stock.length === 0) {
+      console.log("Nenhum produto cadastrado.");
+      readline.question("\nPressione ENTER para continuar...");
+      return;
+    }
+
+    stock.forEach((product) => {
+      console.log(`ID: ${product.id}`);
+      console.log(`Nome: ${product.name}`);
+      console.log(`Preço: ${product.price}`);
+      console.log(`Estoque: ${product.quantify}`);
       console.log("================================");
     });
   }
 
   productList() {
-    if (stock.length < 1) {
-      readline.question(
-        "Nenhum Produt Cadastrado. \nPressione ENTER para continuar..."
-      );
-    } else {
-      console.clear();
-      this.list();
-      readline.question("Pressione ENTER para continuar...");
-    }
+    console.clear();
+    this.list();
   }
 
   productDelete() {
@@ -74,73 +73,83 @@ export class Product {
       console.log("Produto não existe.");
     } else {
       const productToDelete = stock[index];
-      console.log("O produto deletado será:");
+      console.log("O produto a ser deletado:");
       console.log(`ID: ${productToDelete.id}`);
       console.log(`Nome: ${productToDelete.name}`);
       console.log(`Preço: ${productToDelete.price}`);
       console.log(`Estoque: ${productToDelete.quantify}`);
       console.log("================================\n");
 
-      const confirmDelete = readline.question("Confirmar exlusão? (S/N)").toUpperCase()
+      const confirmDelete = readline
+        .question("Confirmar exclusão? (S/N): ")
+        .toUpperCase();
 
-      if(confirmDelete === "s"){
+      if (confirmDelete === "S") {
         stock.splice(index, 1);
-      console.log("Produto Deletado Com Sucesso!");
+        console.log("Produto deletado com sucesso!");
       } else {
-        console.log("Exlusão cancelada.")
+        console.log("Exclusão cancelada.");
       }
-      
     }
-    readline.question("Pressione ENTER para continuar...");
+
+    readline.question("\nPressione ENTER para continuar...");
   }
 
   productUpdate() {
-    console.clear()
-    this.list()
-    const productUpdateID = readline.questionInt("Digite o ID do produto que quer modificar: ")
-    console.clear()
-    const index = stock.findIndex((product) => product.id === productUpdateID)
+    console.clear();
+    this.list();
+    const productUpdateID = readline.questionInt(
+      "Digite o ID do produto que deseja modificar: "
+    );
+    console.clear();
+    const index = stock.findIndex((product) => product.id === productUpdateID);
 
-    if(index === -1){
-      console.log("Este produto não existe.")
+    if (index === -1) {
+      console.log("Este produto não existe.");
     } else {
-      const productToUpdate = stock[index]
-      console.log("O produto deletado será:");
+      const productToUpdate = stock[index];
+      console.log("O produto a ser atualizado:");
       console.log(`ID: ${productToUpdate.id}`);
       console.log(`Nome: ${productToUpdate.name}`);
       console.log(`Preço: ${productToUpdate.price}`);
       console.log(`Estoque: ${productToUpdate.quantify}`);
       console.log("================================\n");
 
-      const productChosseUpdate = readline.questionInt("O que será modificado? \n1 - Nome \n2 - Preço \n3 - Estoque \n0 - Voltar \nEscolha: ")
+      const productChooseUpdate = readline.questionInt(
+        "O que será modificado? \n1 - Nome \n2 - Preço \n3 - Estoque \n0 - Voltar \nEscolha: "
+      );
 
-      switch(productChosseUpdate){
+      switch (productChooseUpdate) {
         case 1:
-          const newName = readline.question("Digite o novo nome: ")
-          if(newName.trim()){
-            productToUpdate.name = newName
+          const newName = readline.question("Digite o novo nome: ");
+          if (newName.trim()) {
+            productToUpdate.name = newName;
+            console.log("Nome atualizado com sucesso!");
+          } else {
+            console.log("Nome inválido.");
           }
-          break
+          break;
         case 2:
-          const newPrice = readline.questionFloat("Digite o novo preço: ")
-          if(newPrice.trim()){
-            productToUpdate.price = newPrice
-          }
-          break
+          const newPrice = readline.questionFloat("Digite o novo preço: ");
+          productToUpdate.price = newPrice;
+          console.log("Preço atualizado com sucesso!");
+          break;
         case 3:
-          const newQuatify = readline.questionInt("Digite a nova quantidade: ")
-          if(newQuatify.trim()){
-            productToUpdate.quantify = newQuatify
-          }
-          break
+          const newQuantity = readline.questionInt(
+            "Digite a nova quantidade: "
+          );
+          productToUpdate.quantify = newQuantity;
+          console.log("Estoque atualizado com sucesso!");
+          break;
         case 0:
-          break
+          console.log("Operação cancelada.");
+          break;
         default:
-          console.log("Opcao não existe.")
-          readline.question("\nPressione ENTER para continuar...");
-          break
+          console.log("Opção não existe.");
+          break;
       }
-
     }
+
+    readline.question("\nPressione ENTER para continuar...");
   }
 }
