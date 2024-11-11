@@ -2,6 +2,7 @@ import { idCreatorProduct } from "./idCreator.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const readline = require("readline-sync");
+import { Product } from "./product";
 
 let stock = [];
 
@@ -41,7 +42,6 @@ export class Product {
   list() {
     if (stock.length === 0) {
       console.log("Nenhum produto cadastrado.");
-      readline.question("\nPressione ENTER para continuar...");
       return;
     }
 
@@ -57,6 +57,7 @@ export class Product {
   productList() {
     console.clear();
     this.list();
+    readline.question("\nPressione ENTER para continuar...");
   }
 
   productDelete() {
@@ -106,6 +107,7 @@ export class Product {
 
     if (index === -1) {
       console.log("Este produto não existe.");
+      readline.question("\nPressione ENTER para continuar...");
     } else {
       const productToUpdate = stock[index];
       console.log("O produto a ser atualizado:");
@@ -151,5 +153,35 @@ export class Product {
     }
 
     readline.question("\nPressione ENTER para continuar...");
+  }
+
+  productBuy() {
+    this.list();
+    let userBuy = readline
+      .question("Você deseja comprar algum produto?")
+      .toUpperCase();
+    switch (userBuy) {
+      case "S":
+        console.clear();
+        productInstance.productList();
+        let idBuy = readline.question(
+          "Digite o ID do produto que quer comprar: "
+        );
+
+        const buyIndex = stock.findIndex((product) => product.id === idBuy);
+
+        if (buyIndex === -1) {
+          console.log("Este produto não existe.");
+          readline.question("\nPressione ENTER para continuar...");
+        } else {
+          const productToBuy = stock[index];
+          console.log("O produto a ser comprado:");
+          console.log(`ID: ${productToBuy.id}`);
+          console.log(`Nome: ${productToBuy.name}`);
+          console.log(`Preço: ${productToBuy.price}`);
+          console.log(`Estoque: ${productToBuy.quantify}`);
+          console.log("================================\n");
+        }
+    }
   }
 }

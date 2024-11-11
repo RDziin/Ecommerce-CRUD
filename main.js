@@ -5,6 +5,7 @@ const readline = require("readline-sync");
 import { User } from "./user.js";
 import { Product } from "./product.js";
 import { Manager } from "./manager.js";
+import { read } from "fs";
 
 const userInstance = new User();
 const productInstance = new Product();
@@ -78,7 +79,6 @@ function userProductScreen() {
     );
     switch (userProductChoice) {
       case 1:
-        productInstance.productList();
         break;
       case 0:
         rep = false;

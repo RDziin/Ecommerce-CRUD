@@ -2,7 +2,7 @@ import { idCreatorUser } from "./idCreator.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const readline = require("readline-sync");
-import bcrypt from "bcrypt";
+
 let allUser = [];
 
 export class User {
@@ -13,9 +13,9 @@ export class User {
     this.dateBirth = dateBirth;
   }
 
-  async userCreate() {
+  userCreate() {
     console.clear();
-    let userID = idCreator();
+    let userID = idCreatorUser();
     let userName = readline.question("Nome: ");
     let userPassword = readline.question("Senha: ", { hideEchoBack: true });
     let userConfirmePass = readline.question("Confirmar senha: ", {
@@ -25,56 +25,38 @@ export class User {
 
     if (userConfirmePass !== userPassword) {
       console.log("Confirmação de senha incorreta.");
-      readline.question("Pressione ENTER para continuar...");
-      return;
+      readline.question("Pressione ENTER para tentar novamente...");
+      return this.userCreate();
     }
 
     if (!this.validateDate(userDateBirth)) {
       console.log("Data de nascimento inválida. Use o formato DD/MM/AAAA.");
-      readline.question("Pressione ENTER para continuar...");
-      return;
+      readline.question("Pressione ENTER para tentar novamente...");
+      return this.userCreate();
     }
 
-    try {
-      const hashedPassword = await bcrypt.hash(userPassword, 10);
-      const newUser = new User(userID, userName, hashedPassword, userDateBirth);
-
-      allUser.push(newUser);
-      console.clear();
-      console.log("Usuário criado com sucesso!");
-      readline.question("\nPressione ENTER para continuar...");
-    } catch (error) {
-      console.log("Erro ao criar usuário:", error);
-      readline.question("\nPressione ENTER para continuar...");
-    }
+    const newUser = new User(userID, userName, userPassword, userDateBirth);
+    allUser.push(newUser);
+    console.clear();
+    console.log("Usuário criado com sucesso!");
+    readline.question("\nPressione ENTER para continuar...");
   }
 
-  async userLogin() {
+  userLogin() {
     console.clear();
     let loginName = readline.question("Login: ");
     let loginPassword = readline.question("Senha: ", { hideEchoBack: true });
 
-    // Encontrar o usuário pelo nome
-    const loginUser = allUser.find((u) => u.name === loginName);
-
-    if (!loginUser) {
-      console.log("Usuário não encontrado.");
-      readline.question("\nPressione ENTER para continuar...");
-      return false;
-    }
-
-    // Comparar a senha com o hash
-    const isPasswordCorrect = await bcrypt.compare(
-      loginPassword,
-      loginUser.password
+    const loginUser = allUser.find(
+      (u) => u.name === loginName && u.password === loginPassword
     );
 
-    if (isPasswordCorrect) {
+    if (loginUser) {
       console.log("Login efetuado com sucesso!");
       readline.question("\nPressione ENTER para continuar...");
       return true;
     } else {
-      console.log("Senha incorreta.");
+      console.log("Nome de usuário ou senha incorretos.");
       readline.question("\nPressione ENTER para tentar novamente...");
       return false;
     }
@@ -117,9 +99,7 @@ export class User {
       console.log(`Nascimento: ${userToDelete.dateBirth}`);
       console.log("================================\n");
 
-      const confirmDelete = readline
-        .question("Confirmar exclusão? (S/N): ")
-        .toUpperCase();
+      const confirmDelete = readline.question("Confirmar exclusão? (S/N): ").toUpperCase();
       if (confirmDelete === "S") {
         allUser.splice(index, 1);
         console.log("Usuário deletado com sucesso!");
@@ -133,9 +113,7 @@ export class User {
   userUpdate() {
     console.clear();
     this.list();
-    const userUpdateID = readline.questionInt(
-      "Digite o ID do usuário que deseja modificar: "
-    );
+    const userUpdateID = readline.questionInt("Digite o ID do usuário que deseja modificar: ");
     const index = allUser.findIndex((user) => user.id === userUpdateID);
 
     if (index === -1) {
@@ -165,9 +143,7 @@ export class User {
         }
         break;
       case 2:
-        const newDateBirth = readline.question(
-          "Digite a nova data de nascimento: "
-        );
+        const newDateBirth = readline.question("Digite a nova data de nascimento: ");
         if (this.validateDate(newDateBirth)) {
           userToUpdate.dateBirth = newDateBirth;
           updated = true;
