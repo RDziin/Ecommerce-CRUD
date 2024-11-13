@@ -3,7 +3,8 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const readline = require("readline-sync");
 
-let allUser = [];
+export let allUser = [];
+let currentUser = null;
 
 export class User {
   constructor(id, name, password, dateBirth) {
@@ -24,21 +25,30 @@ export class User {
     let userDateBirth = readline.question("Nascimento (DD/MM/AAAA): ");
 
     if (userConfirmePass !== userPassword) {
-      console.log("Confirmação de senha incorreta.");
+      console.clear();
+      console.log("Confirmacao de senha incorreta.");
       readline.question("Pressione ENTER para tentar novamente...");
       return this.userCreate();
     }
 
     if (!this.validateDate(userDateBirth)) {
-      console.log("Data de nascimento inválida. Use o formato DD/MM/AAAA.");
+      console.clear();
+      console.log("Data de nascimento invalida. Use o formato DD/MM/AAAA.");
       readline.question("Pressione ENTER para tentar novamente...");
       return this.userCreate();
+    }
+  
+    const userExists = allUser.some((user) => user.name === userName);
+    if (userExists) {
+      console.log("Este usuario ja existe!");
+      readline.question("Pressione ENTER para continuar...");
+      return;
     }
 
     const newUser = new User(userID, userName, userPassword, userDateBirth);
     allUser.push(newUser);
     console.clear();
-    console.log("Usuário criado com sucesso!");
+    console.log("Usuario criado com sucesso!");
     readline.question("\nPressione ENTER para continuar...");
   }
 
@@ -52,11 +62,14 @@ export class User {
     );
 
     if (loginUser) {
+      console.clear();
       console.log("Login efetuado com sucesso!");
+      currentUser = loginUser;
       readline.question("\nPressione ENTER para continuar...");
       return true;
     } else {
-      console.log("Nome de usuário ou senha incorretos.");
+      console.clear();
+      console.log("Nome de usuario ou senha incorretos.");
       readline.question("\nPressione ENTER para tentar novamente...");
       return false;
     }
@@ -64,8 +77,8 @@ export class User {
 
   list() {
     if (allUser.length === 0) {
-      console.log("Nenhum usuário cadastrado.");
-      readline.question("\nPressione ENTER para continuar...");
+      console.clear();
+      console.log("Nenhum usuario cadastrado.");
       return;
     }
 
@@ -90,21 +103,24 @@ export class User {
     const index = allUser.findIndex((user) => user.id === deleteID);
 
     if (index === -1) {
-      console.log("Usuário não existe.");
+      console.log("Usuario nao existe.");
     } else {
       const userToDelete = allUser[index];
-      console.log("O usuário a ser deletado:");
+      console.log("O usuario a ser deletado:");
       console.log(`ID: ${userToDelete.id}`);
       console.log(`Nome: ${userToDelete.name}`);
       console.log(`Nascimento: ${userToDelete.dateBirth}`);
       console.log("================================\n");
 
-      const confirmDelete = readline.question("Confirmar exclusão? (S/N): ").toUpperCase();
+      const confirmDelete = readline
+        .question("Confirmar exclusao? (S/N): ")
+        .toUpperCase();
       if (confirmDelete === "S") {
+        console.clear();
         allUser.splice(index, 1);
-        console.log("Usuário deletado com sucesso!");
+        console.log("Usuario deletado com sucesso!");
       } else {
-        console.log("Exclusão cancelada.");
+        console.log("Exclusao cancelada.");
       }
     }
     readline.question("\nPressione ENTER para continuar...");
@@ -113,17 +129,20 @@ export class User {
   userUpdate() {
     console.clear();
     this.list();
-    const userUpdateID = readline.questionInt("Digite o ID do usuário que deseja modificar: ");
+    const userUpdateID = readline.questionInt(
+      "Digite o ID do usuario que deseja modificar: "
+    );
     const index = allUser.findIndex((user) => user.id === userUpdateID);
 
     if (index === -1) {
-      console.log("Este usuário não existe.");
+      console.clear();
+      console.log("Este usuario nao existe.");
       readline.question("\nPressione ENTER para continuar...");
       return;
     }
 
     const userToUpdate = allUser[index];
-    console.log("O usuário a ser modificado:");
+    console.log("O usuario a ser modificado:");
     console.log(`ID: ${userToUpdate.id}`);
     console.log(`Nome: ${userToUpdate.name}`);
     console.log(`Nascimento: ${userToUpdate.dateBirth}`);
@@ -136,6 +155,7 @@ export class User {
     let updated = false;
     switch (userChooseUpdate) {
       case 1:
+        console.clear();
         const newName = readline.question("Digite o novo nome: ");
         if (newName.trim()) {
           userToUpdate.name = newName;
@@ -143,20 +163,26 @@ export class User {
         }
         break;
       case 2:
-        const newDateBirth = readline.question("Digite a nova data de nascimento: ");
+        console.clear();
+        const newDateBirth = readline.question(
+          "Digite a nova data de nascimento: "
+        );
         if (this.validateDate(newDateBirth)) {
           userToUpdate.dateBirth = newDateBirth;
           updated = true;
         } else {
+          console.clear();
           console.log("Data de nascimento inválida. Use o formato DD/MM/AAAA.");
           readline.question("\nPressione ENTER para continuar...");
         }
         break;
       case 0:
-        console.log("Operação cancelada.");
+        console.clear();
+        console.log("Operaçao cancelada.");
         break;
       default:
-        console.log("Opção não existe.");
+        console.clear();
+        console.log("Opçao nao existe.");
         break;
     }
 
@@ -164,6 +190,94 @@ export class User {
       console.clear();
       console.log("Usuário atualizado com sucesso!");
       readline.question("\nPressione ENTER para continuar...");
+    }
+  }
+
+  userEditOwnProfile() {
+    console.clear();
+    if (!currentUser) {
+      console.log("É necessário fazer login para editar o perfil.");
+      readline.question("\nPressione ENTER para continuar...");
+      return;
+    }
+
+    console.clear();
+    console.log("O seu perfil:");
+    console.log(`ID: ${currentUser.id}`);
+    console.log(`Nome: ${currentUser.name}`);
+    console.log(`Nascimento: ${currentUser.dateBirth}`);
+    console.log("================================\n");
+
+    const userChooseUpdate = readline.questionInt(
+      "O que deseja modificar? \n1 - Nome \n2 - Data de Nascimento \n3 - Senha \n0 - Voltar \nEscolha: "
+    );
+
+    let updated = false;
+    switch (userChooseUpdate) {
+      case 1:
+        console.clear();
+        const newName = readline.question("Digite o novo nome: ");
+        if (newName.trim()) {
+          currentUser.name = newName;
+          updated = true;
+        }
+        break;
+      case 2:
+        console.clear();
+        const newDateBirth = readline.question(
+          "Digite a nova data de nascimento (DD/MM/AAAA): "
+        );
+        if (this.validateDate(newDateBirth)) {
+          currentUser.dateBirth = newDateBirth;
+          updated = true;
+        } else {
+          console.clear();
+          console.log("Data de nascimento inválida. Use o formato DD/MM/AAAA.");
+          readline.question("\nPressione ENTER para continuar...");
+        }
+        break;
+      case 3:
+        console.clear();
+        const oldPassword = readline.question("Digite sua senha atual: ", {
+          hideEchoBack: true,
+        });
+        if (oldPassword === currentUser.password) {
+          console.clear();
+          const newPassword = readline.question("Digite a nova senha: ", {
+            hideEchoBack: true,
+          });
+          const confirmNewPassword = readline.question(
+            "Confirme a nova senha: ",
+            {
+              hideEchoBack: true,
+            }
+          );
+          if (newPassword === confirmNewPassword) {
+            currentUser.password = newPassword;
+            updated = true;
+          } else {
+            console.clear();
+            console.log("As senhas nao coincidem.");
+          }
+        } else {
+          console.log("Senha atual incorreta.");
+        }
+        break;
+      case 0:
+        console.clear();
+        console.log("Operaçao cancelada.");
+
+        break;
+      default:
+        console.clear();
+        console.log("Opçao nao existe.");
+
+        break;
+    }
+
+    if (updated) {
+      console.clear();
+      console.log("Perfil atualizado com sucesso!");
     }
   }
 

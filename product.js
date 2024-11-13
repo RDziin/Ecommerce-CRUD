@@ -2,9 +2,8 @@ import { idCreatorProduct } from "./idCreator.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const readline = require("readline-sync");
-import { Product } from "./product";
 
-let stock = [];
+export let stock = [];
 
 export class Product {
   constructor(id, name, price, quantify) {
@@ -18,12 +17,12 @@ export class Product {
     console.clear();
     let productID = idCreatorProduct();
     let productName = readline.question("Nome: ");
-    let productPrice = readline.questionFloat("Preço: ");
+    let productPrice = readline.questionFloat("Preco: ");
     let productQuantify = readline.questionInt("Quantidade em estoque: ");
 
     const productExists = stock.some((product) => product.name === productName);
     if (productExists) {
-      console.log("Este produto já existe!");
+      console.log("Este produto ja existe!");
       readline.question("Pressione ENTER para continuar...");
       return;
     }
@@ -71,7 +70,7 @@ export class Product {
     const index = stock.findIndex((product) => product.id === idDelete);
 
     if (index === -1) {
-      console.log("Produto não existe.");
+      console.log("Produto nao existe.");
     } else {
       const productToDelete = stock[index];
       console.log("O produto a ser deletado:");
@@ -82,14 +81,14 @@ export class Product {
       console.log("================================\n");
 
       const confirmDelete = readline
-        .question("Confirmar exclusão? (S/N): ")
+        .question("Confirmar exclusao? (S/N): ")
         .toUpperCase();
 
       if (confirmDelete === "S") {
         stock.splice(index, 1);
         console.log("Produto deletado com sucesso!");
       } else {
-        console.log("Exclusão cancelada.");
+        console.log("Exclusao cancelada.");
       }
     }
 
@@ -118,7 +117,7 @@ export class Product {
       console.log("================================\n");
 
       const productChooseUpdate = readline.questionInt(
-        "O que será modificado? \n1 - Nome \n2 - Preço \n3 - Estoque \n0 - Voltar \nEscolha: "
+        "O que sera modificado? \n1 - Nome \n2 - Preco \n3 - Estoque \n0 - Voltar \nEscolha: "
       );
 
       switch (productChooseUpdate) {
@@ -128,13 +127,13 @@ export class Product {
             productToUpdate.name = newName;
             console.log("Nome atualizado com sucesso!");
           } else {
-            console.log("Nome inválido.");
+            console.log("Nome invalido.");
           }
           break;
         case 2:
-          const newPrice = readline.questionFloat("Digite o novo preço: ");
+          const newPrice = readline.questionFloat("Digite o novo preco: ");
           productToUpdate.price = newPrice;
-          console.log("Preço atualizado com sucesso!");
+          console.log("Preco atualizado com sucesso!");
           break;
         case 3:
           const newQuantity = readline.questionInt(
@@ -147,7 +146,7 @@ export class Product {
           console.log("Operação cancelada.");
           break;
         default:
-          console.log("Opção não existe.");
+          console.log("Opcao nao existe.");
           break;
       }
     }
@@ -155,33 +154,23 @@ export class Product {
     readline.question("\nPressione ENTER para continuar...");
   }
 
-  productBuy() {
-    this.list();
-    let userBuy = readline
-      .question("Você deseja comprar algum produto?")
-      .toUpperCase();
-    switch (userBuy) {
-      case "S":
-        console.clear();
-        productInstance.productList();
-        let idBuy = readline.question(
-          "Digite o ID do produto que quer comprar: "
+  updateStock(productId, quantityBought) {
+    console.clear();
+    const productIndex = stock.findIndex((product) => product.id === productId);
+
+    if (productIndex !== -1) {
+      const product = stock[productIndex];
+
+      if (product.quantify >= quantityBought) {
+        product.quantify -= quantityBought;
+      } else {
+        console.log(
+          `Estoque insuficiente para ${product.name}. Disponível: ${product.quantify} unidades.`
         );
-
-        const buyIndex = stock.findIndex((product) => product.id === idBuy);
-
-        if (buyIndex === -1) {
-          console.log("Este produto não existe.");
-          readline.question("\nPressione ENTER para continuar...");
-        } else {
-          const productToBuy = stock[index];
-          console.log("O produto a ser comprado:");
-          console.log(`ID: ${productToBuy.id}`);
-          console.log(`Nome: ${productToBuy.name}`);
-          console.log(`Preço: ${productToBuy.price}`);
-          console.log(`Estoque: ${productToBuy.quantify}`);
-          console.log("================================\n");
-        }
+        return false
+      }
+    } else {
+      console.log("Produto nao encontrado.");
     }
   }
 }

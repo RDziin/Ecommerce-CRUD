@@ -2,9 +2,11 @@ import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const readline = require("readline-sync");
 
+import { allUser } from "./user.js";
 import { User } from "./user.js";
 import { Product } from "./product.js";
 
+const allUserInstance = allUser 
 const userInstance = new User();
 const productInstance = new Product();
 
@@ -15,7 +17,6 @@ export class Manager {
     this.password = password;
   }
 
-  // Método de login do gerente
   managerLogin() {
     console.clear();
     const admin = new Manager(1, "Rhodrigo", "RD123");
@@ -32,29 +33,34 @@ export class Manager {
       } else {
         attempts--;
         console.log(
-          `Nome de usuário ou senha incorretos. Tentativas restantes: ${attempts}`
+          `Nome de usuario ou senha incorretos. Tentativas restantes: ${attempts}`
         );
       }
 
       if (attempts === 0) {
-        console.log("Número de tentativas excedido. Acesso negado.");
+        console.log("Numero de tentativas excedido. Acesso negado.");
         readline.question("\nPressione ENTER para sair...");
         return false;
       }
     }
   }
 
-  // Gerenciamento de usuários
   userManager() {
     console.clear();
-    userInstance.userList();
+    if (allUser.length === 0) {
+      console.clear();
+      console.log("Nenhum usuario cadastrado.");
+      readline.question("\nPressione ENTER para sair...");
+      return;
+    }
+    userInstance.list();
     let managerChooseUser = readline
-      .question("\nDeseja realizar alguma alteração? (S/N): ")
+      .question("\nDeseja realizar alguma alteracao? (S/N): ")
       .toUpperCase();
 
     if (managerChooseUser === "S") {
       let modUserChoose = readline.questionInt(
-        "\n1 - Modificar Dados \n2 - Deletar Usuário \n0 - Voltar \nEscolha: "
+        "\n1 - Modificar Dados \n2 - Deletar Usuario \n0 - Voltar \nEscolha: "
       );
 
       switch (modUserChoose) {
@@ -68,20 +74,19 @@ export class Manager {
           console.log("Voltando ao menu anterior...");
           break;
         default:
-          console.log("Opção Inválida. Retornando ao menu anterior...");
+          console.log("Opção Invalida. Retornando ao menu anterior...");
           break;
       }
     } else if (managerChooseUser !== "N") {
-      console.log("Opção inválida.");
+      console.log("Opcao invalida.");
     }
   }
 
-  // Gerenciamento de produtos
   productManager() {
     console.clear();
     productInstance.productList();
     let managerChooseProduct = readline
-      .question("\nDeseja realizar alguma alteração? (S/N): ")
+      .question("\nDeseja realizar alguma alteracao? (S/N): ")
       .toUpperCase();
 
     if (managerChooseProduct === "S") {
@@ -103,11 +108,11 @@ export class Manager {
           console.log("Voltando ao menu anterior...");
           break;
         default:
-          console.log("Opção Inválida. Retornando ao menu anterior...");
+          console.log("Opcao Invalida. Retornando ao menu anterior...");
           break;
       }
     } else if (managerChooseProduct !== "N") {
-      console.log("Opção inválida.");
+      console.log("Opcao invalida.");
     }
   }
 }

@@ -5,8 +5,10 @@ const readline = require("readline-sync");
 import { User } from "./user.js";
 import { Product } from "./product.js";
 import { Manager } from "./manager.js";
+import { Item } from "./cart.js";
 import { read } from "fs";
 
+const itemInstance = new Item()
 const userInstance = new User();
 const productInstance = new Product();
 const managerInstance = new Manager();
@@ -16,7 +18,7 @@ function main() {
   do {
     console.clear();
     const clientChoose = readline.questionInt(
-      "Você é: \n1 - Cliente \n2 - Administrador \n0 - Sair \nEscolha: "
+      "Voce e: \n1 - Cliente \n2 - Administrador \n0 - Sair \nEscolha: "
     );
     switch (clientChoose) {
       case 1:
@@ -74,12 +76,28 @@ function userProductScreen() {
   let rep = true;
   do {
     console.clear();
-    const userProductChoice = readline.questionInt(
-      "1 - Ver produtos \n0 - Voltar \nEscolha: "
+    const userChoice = readline.questionInt(
+      "1 - Ver produtos \n2 - Editar Perfil \n3 - Carrinho\n0 - Voltar \nEscolha: "
     );
-    switch (userProductChoice) {
+    switch (userChoice) {
       case 1:
+        productInstance.productList()
+        let confirmeBuy = readline.question("Deseja comprar algum item? (S/N)").toUpperCase()
+        switch(confirmeBuy){
+          case "S":
+            itemInstance.addProduct()
+            break
+          case "N":
+            break
+        } 
         break;
+      case 2:
+        userInstance.userEditOwnProfile()
+        break
+      case 3:
+        itemInstance.viewCart()
+        itemInstance.finalizeBuy()
+        break
       case 0:
         rep = false;
         break;
@@ -105,7 +123,7 @@ function managerScreen() {
   do {
     console.clear();
     let managerChoose = readline.questionInt(
-      "Você deseja alterar: \n1 - Usuários \n2 - Produtos \n0 - Sair \nEscolha: "
+      "Voce deseja alterar: \n1 - Usuarios \n2 - Produtos \n0 - Sair \nEscolha: "
     );
     switch (managerChoose) {
       case 1:
