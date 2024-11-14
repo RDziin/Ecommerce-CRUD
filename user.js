@@ -286,7 +286,3 @@ export class User {
     return dateFormat.test(date);
   }
 } 
-
-function binhoCOsta(){
-  
-}
