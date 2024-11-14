@@ -285,4 +285,8 @@ export class User {
     const dateFormat = /^\d{2}\/\d{2}\/\d{4}$/;
     return dateFormat.test(date);
   }
+} 
+
+function binhoCOsta(){
+  
 }
